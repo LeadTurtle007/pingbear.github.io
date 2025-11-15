@@ -3,11 +3,11 @@ const MANIFEST = 'flutter-app-manifest';
 const TEMP = 'flutter-temp-cache';
 const CACHE_NAME = 'flutter-app-cache';
 
-const RESOURCES = {"flutter_bootstrap.js": "609f8200f93384ff8b906b904e626bef",
+const RESOURCES = {"flutter_bootstrap.js": "9ff27bafb910474cf287264d318b3fb5",
 "version.json": "3f0320199b70edba658158e9a2f39783",
 "index.html": "4c09fca2ddf2d29cd423e5ad9c5036f5",
 "/": "4c09fca2ddf2d29cd423e5ad9c5036f5",
-"main.dart.js": "5ebaff9886b6799f3e17ec80a5389b65",
+"main.dart.js": "8499a2f6d87fbc89984e7122ec0e27ca",
 "flutter.js": "888483df48293866f9f41d3d9274a779",
 "favicon.png": "5dcef449791fa27946b3d35ad8803796",
 "icons/Icon-192.png": "ac9a721a12bbc803b44f645561ecb1e1",
@@ -35,7 +35,7 @@ const RESOURCES = {"flutter_bootstrap.js": "609f8200f93384ff8b906b904e626bef",
 "assets/AssetManifest.bin": "46ede63c445d92a73ecd8d00899cc757",
 "assets/fonts/Autobus.ttf": "66c56bb07435a51903de24dc0bda0b37",
 "assets/fonts/LCD_Solid.ttf": "1cb7c6ea746ff369304a02b0538ce0f1",
-"assets/fonts/MaterialIcons-Regular.otf": "52de86b1d27d7e69702efa492f02d11c",
+"assets/fonts/MaterialIcons-Regular.otf": "6435ab3405fd817d24dd92f5cf5fcaf3",
 "assets/assets/white_logo.png": "02d5b47f6b098e9730ff046422fd6637",
 "assets/assets/sounds/oh_boy_499.mp3": "3bb47f51848297447e0e52fc820ef85f",
 "assets/assets/sounds/fingerlicking_message_tone.mp3": "2e802508a197d36422050a3e1e2712f3",
