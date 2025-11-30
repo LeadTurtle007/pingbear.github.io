@@ -89824,7 +89824,7 @@ a1z(a,b,c,d){var s=0,r=A.T(t.r8),q,p,o,n,m,l,k,j,i,h
 var $async$xs=A.P(function(e,f){if(e===1)return A.Q(f,r)
 for(;;)switch(s){case 0:i=t.N
 s=3
-return A.V(A.aEj(A.dk("http://127.0.0.1:8000/v1/contact"),B.ad.vt(A.ao(["name",B.c.dA(c),"email",B.c.dA(a),"subject",B.c.dA(d),"message",B.c.dA(b)],i,i),null),B.Ks),$async$xs)
+return A.V(A.aEj(A.dk("https://gchamp-uat.leadturtle.in/v1/contact"),B.ad.vt(A.ao(["name",B.c.dA(c),"email",B.c.dA(a),"subject",B.c.dA(d),"message",B.c.dA(b)],i,i),null),B.Ks),$async$xs)
 case 3:h=f
 if(h.b>=200&&h.b<300){n=h
 m=t.P
@@ -90015,7 +90015,7 @@ var $async$D8=A.P(function(a2,a3){if(a2===1){o.push(a3)
 s=p}for(;;)switch(s){case 0:p=4
 g=t.N
 n=A.ao(["user_name",b,"email",a,"phone",a0],g,t.z)
-m="http://127.0.0.1:8000/v1/user/web_user_payment"
+m="https://gchamp-uat.leadturtle.in/v1/user/web_user_payment"
 f=A.dk(m)
 g=A.ao(["Content-Type","application/json"],g,g)
 s=7
@@ -90054,7 +90054,7 @@ var $async$D6=A.P(function(a1,a2){if(a1===1){o.push(a2)
 s=p}for(;;)switch(s){case 0:p=4
 g=t.N
 n=A.ao(["email",a,"otp",b],g,g)
-m="http://127.0.0.1:8000/v1/user/otp/verify"
+m="https://gchamp-uat.leadturtle.in/v1/user/otp/verify"
 f=A.dk(m)
 g=A.ao(["Content-Type","application/json"],g,g)
 s=7
@@ -90093,7 +90093,7 @@ var $async$Ax=A.P(function(d,e){if(d===1){o.push(e)
 s=p}for(;;)switch(s){case 0:p=4
 j=t.N
 n=A.ao(["service_id",b,"payment_type",a],j,j)
-i=A.dk("http://127.0.0.1:8000/v1/subscribe")
+i=A.dk("https://gchamp-uat.leadturtle.in/v1/subscribe")
 j=A.ao(["Content-Type","application/json","Authorization","Bearer "+c],j,j)
 s=7
 return A.V(A.aEj(i,B.ad.vt(n,null),j),$async$Ax)
@@ -90130,7 +90130,7 @@ if(b.length===0){h=A.d0("Access token is required but was not provided")
 throw A.f(h)}h=t.N
 n=A.ao(["Content-Type","application/json","Authorization","Bearer "+b],h,h)
 s=7
-return A.V(A.b87(A.dk("http://127.0.0.1:8000/v1/payment/status/"+A.dM(2,a,B.B,!1)),n),$async$D7)
+return A.V(A.b87(A.dk("https://gchamp-uat.leadturtle.in/v1/payment/status/"+A.dM(2,a,B.B,!1)),n),$async$D7)
 case 7:m=a0
 if(m.b===200){h=m
 l=t.P.a(B.ad.kc(0,A.nr(A.np(h.e)).cJ(0,h.w),null))
