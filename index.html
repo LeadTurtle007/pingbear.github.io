@@ -31,8 +31,202 @@
 
   <title>pingbear</title>
   <link rel="manifest" href="manifest.json">
+  
+  <!-- SANDBOX -->
+  <script src="https://sdk.cashfree.com/js/ui/2.0.0/cashfree.sandbox.js" onload="handleCashfreeSDKLoad()" onerror="handleCashfreeSDKError()"></script>
+  <!-- PRODUCTION -->
+  <!-- <script src="https://sdk.cashfree.com/js/ui/2.0.0/cashfree.prod.js" onload="handleCashfreeSDKLoad()" onerror="handleCashfreeSDKError()"></script> -->
+  
+  <script>
+    var cashfreeSDKReady = false;
+    var cashfreeSDKError = false;
+
+    function handleCashfreeSDKLoad() {
+      console.log('Cashfree SDK script loaded');
+      // Give it a moment to initialize
+      setTimeout(function() {
+        checkCashfreeSDK();
+      }, 100);
+    }
+
+    function checkCashfreeSDK() {
+      // Check if SDK is available in different ways
+      console.log('Checking for Cashfree SDK...');
+      console.log('window.Cashfree:', typeof window.Cashfree);
+      console.log('window.cashfree:', typeof window.cashfree);
+      
+      // Check various possible SDK locations
+      if (window.Cashfree) {
+        console.log('Found window.Cashfree:', window.Cashfree);
+        if (typeof window.Cashfree.checkout === 'function') {
+          console.log('Cashfree SDK found at window.Cashfree with checkout()');
+          cashfreeSDKReady = true;
+          return;
+        }
+      }
+      
+      if (window.cashfree) {
+        console.log('Found window.cashfree:', window.cashfree);
+        if (typeof window.cashfree.checkout === 'function') {
+          console.log('Cashfree SDK found at window.cashfree with checkout()');
+          cashfreeSDKReady = true;
+          return;
+        }
+      }
+      
+      // Log all window properties that might contain Cashfree
+      var cashfreeKeys = Object.keys(window).filter(k => k.toLowerCase().includes('cash'));
+      console.log('Window properties containing "cash":', cashfreeKeys);
+      
+      if (cashfreeKeys.length > 0) {
+        cashfreeKeys.forEach(function(key) {
+          console.log('window.' + key + ':', window[key]);
+        });
+      }
+      
+      console.warn('Cashfree SDK loaded but checkout() function not found');
+      // Don't set error yet, might still be initializing
+    }
+
+    function handleCashfreeSDKError() {
+      console.error('Failed to load Cashfree SDK');
+      cashfreeSDKError = true;
+    }
+
+    // Wait for SDK to be ready
+    function waitForCashfreeSDK(callback, maxAttempts) {
+      maxAttempts = maxAttempts || 50; // 5 seconds max wait
+      var attempts = 0;
+
+      var checkSDK = setInterval(function() {
+        attempts++;
+        
+        if (cashfreeSDKReady) {
+          clearInterval(checkSDK);
+          callback(true);
+          return;
+        }
+        
+        // Also check directly each attempt
+        if (window.Cashfree && typeof window.Cashfree.checkout === 'function') {
+          cashfreeSDKReady = true;
+          clearInterval(checkSDK);
+          callback(true);
+          return;
+        } else if (window.cashfree && typeof window.cashfree.checkout === 'function') {
+          cashfreeSDKReady = true;
+          clearInterval(checkSDK);
+          callback(true);
+          return;
+        }
+
+        if (attempts >= maxAttempts || cashfreeSDKError) {
+          clearInterval(checkSDK);
+          callback(false);
+        }
+      }, 100); // Check every 100ms
+    }
+
+    // small helper to open Cashfree checkout using payment_session_id
+    // paymentSessionId: string, returnUrl: string
+    function openCashfreeCheckout(paymentSessionId, returnUrl) {
+      // Try to find the Cashfree SDK
+      var cashfreeSDK = window.Cashfree || window.cashfree;
+      
+      if (!cashfreeSDK) {
+        // Wait for SDK to load
+        console.log('Waiting for Cashfree SDK to load...');
+        waitForCashfreeSDK(function(ready) {
+          if (ready) {
+            console.log('Cashfree SDK is now ready');
+            executeCheckout(paymentSessionId, returnUrl);
+          } else {
+            console.error('Cashfree SDK failed to load, using fallback redirect');
+            // Use fallback redirect to hosted checkout page
+            var checkoutUrl = 'https://payments.cashfree.com/checkout?payment_session_id=' + encodeURIComponent(paymentSessionId);
+            if (returnUrl) {
+              checkoutUrl += '&return_url=' + encodeURIComponent(returnUrl);
+            }
+            window.location.href = checkoutUrl;
+          }
+        });
+        return;
+      }
+
+      executeCheckout(paymentSessionId, returnUrl);
+    }
+
+    function executeCheckout(paymentSessionId, returnUrl) {
+      var cashfreeSDK = window.Cashfree || window.cashfree;
+      
+      if (!cashfreeSDK || typeof cashfreeSDK.checkout !== 'function') {
+        console.error('Cashfree SDK not loaded or checkout() missing');
+        console.log('window.Cashfree:', window.Cashfree);
+        console.log('window.cashfree:', window.cashfree);
+        console.log('All window properties containing "cash":', Object.keys(window).filter(k => k.toLowerCase().includes('cash')));
+        
+        // Fallback: redirect to Cashfree hosted checkout page
+        console.log('Falling back to hosted checkout URL redirect');
+        var checkoutUrl = 'https://payments.cashfree.com/checkout?payment_session_id=' + encodeURIComponent(paymentSessionId);
+        if (returnUrl) {
+          checkoutUrl += '&return_url=' + encodeURIComponent(returnUrl);
+        }
+        window.location.href = checkoutUrl;
+        return;
+      }
+
+      const options = {
+        paymentSessionId: paymentSessionId,
+        returnUrl: returnUrl || window.location.href
+      };
+
+      console.log('Calling Cashfree checkout with options:', options);
+
+      // cashfree.checkout returns a Promise
+      cashfreeSDK.checkout(options).then(function (result) {
+        console.log('Cashfree checkout result:', result);
+        if (result && result.error) {
+          console.error('Cashfree checkout error:', result.error);
+          alert('Payment failed to start: ' + (result.error.message || result.error));
+        } else if (result && result.redirect) {
+          console.log('Cashfree triggered redirect / hosted checkout');
+          // hosted redirect handled by SDK
+        } else {
+          console.log('Cashfree checkout completed successfully');
+        }
+      }).catch(function (err) {
+        console.error('checkout() promise rejected', err);
+        // Fallback to URL redirect on error
+        console.log('Falling back to hosted checkout URL redirect after error');
+        var checkoutUrl = 'https://payments.cashfree.com/checkout?payment_session_id=' + encodeURIComponent(paymentSessionId);
+        if (returnUrl) {
+          checkoutUrl += '&return_url=' + encodeURIComponent(returnUrl);
+        }
+        window.location.href = checkoutUrl;
+      });
+    }
+  </script>
 </head>
 <body>
   <script src="flutter_bootstrap.js" async></script>
+  <script>
+    // Also check for SDK after page loads
+    window.addEventListener('DOMContentLoaded', function() {
+      setTimeout(function() {
+        if (!cashfreeSDKReady) {
+          checkCashfreeSDK();
+        }
+      }, 500);
+    });
+    
+    // Final check after everything loads
+    window.addEventListener('load', function() {
+      setTimeout(function() {
+        if (!cashfreeSDKReady) {
+          checkCashfreeSDK();
+        }
+      }, 1000);
+    });
+  </script>
 </body>
 </html>
